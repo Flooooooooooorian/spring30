@@ -10,6 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,10 +30,22 @@ class UserControllerTest {
 
         //WHEN
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users/me2"))
-        //THEN
+                //THEN
                 .andExpect(status().isOk())
                 .andExpect(content().string("user"));
 
 
+    }
+
+    @Test
+    @DirtiesContext
+    @WithMockUser
+    void post() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content("testBody")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("testBody"));
     }
 }
